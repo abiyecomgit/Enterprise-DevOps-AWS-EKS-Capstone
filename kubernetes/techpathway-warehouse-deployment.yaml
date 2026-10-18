@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: techpathway-warehouse
+  namespace: techpathway
+
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: techpathway-warehouse
+
+  template:
+    metadata:
+      labels:
+        app: techpathway-warehouse
+
+    spec:
+      containers:
+        - name: techpathway-warehouse
+          image: 975503882726.dkr.ecr.us-east-1.amazonaws.com/techpathway-warehouse:v1.0.0
+          imagePullPolicy: IfNotPresent
+
+          ports:
+            - containerPort: 5002
+
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 5002
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 2
+            failureThreshold: 3
+
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 5002
+            initialDelaySeconds: 15
+            periodSeconds: 20
+            timeoutSeconds: 2
+            failureThreshold: 3
+
+          envFrom:
+            - configMapRef:
+                name: techpathway-config
+            - secretRef:
+                name: techpathway-secrets
+
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"

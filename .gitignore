@@ -2,3 +2,10 @@
 __pycache__/
 *.pyc
 .vscode/
+techpathway-secrets.yaml
+
+# Local application databases
+*.db
+
+# Temporary Kubernetes troubleshooting manifests
+kubernetes/pending-test.yaml
